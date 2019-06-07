@@ -24,6 +24,8 @@ EOF
 dateStart=$(date +%Y-%m-%d\ %H:%M)
 dateEndDay=''
 dateEnd=''
+file1="tmp_labwork_"$(hostname -f)"1"
+file2="tmp_labwork_"$(hostname -f)"2"
 fileName=$(echo "res_"$(hostname -f))
 address="$1"
 
@@ -37,10 +39,10 @@ killHandle(){
 timeHandle(){
   diff=$(echo "$(date -d "$dateEnd" "+%s")-$(date -d "$dateStart" "+%s")" | bc)
 
-  if [ "$diff" -qe 0 ]
+  if [ "$diff" -ge 0 ]
   then
     sleep "$diff"
-  else
+  fi
 
   getResults
 
@@ -48,13 +50,13 @@ timeHandle(){
 }
 
 getResults(){
-  last -s "$dateStart" | tr -s ' ' | cut -d ' ' -f1,5- > tmp_labwork1
+  last -s "$dateStart" | tr -s ' ' | cut -d ' ' -f1,5- > "$file1"
   lines=$(cat tmp_labwork1 | wc -l)
   for n in $(seq 1 1 "$lines")
   do
-    echo $(hostname -f) >> tmp_labwork2
+    echo $(hostname -f) >> "$file2"
   done
-  paste -d' ' tmp_labwork2 tmp_labwork1 > "$fileName"
+  paste -d' ' "$file2" "$file1" > "$fileName"
 }
 
 #Finish
@@ -63,7 +65,7 @@ finish() {
   scp "$fileName" "$address"
 
   #Cleanup
-  rm tmp_labwork*
+  rm tmp_labwork_$(hostname -f)*
   rm "$fileName"
 }
 
@@ -72,11 +74,12 @@ finish() {
 trap killHandle 9
 if [ "$#" -eq 1 ]
 then
-  while :
-  do
-    :
+echo "I ended in here"
+#  while :
+#  do
+#    :
     #Waiting for the program to finish via trap ~ PC turn off or ps kill
-  done
+#  done
 elif [ "$#" -eq 2 ]
 then
   dateEndDay=$(date +%Y\-%m\-%d)
