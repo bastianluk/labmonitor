@@ -38,6 +38,10 @@ DESCRIPTION
                 End time of the monitoring
                 Time format:
                 %H:%M
+        -u
+                Prints a Unified verion of the log on per user basis
+                FLAGS:
+                c     ~ Compact
 ```
 ```console
 SYNTAX
