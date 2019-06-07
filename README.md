@@ -12,10 +12,12 @@ User that was logged in at the machine during the monitoring
 - [Time Stamps]  
 Time stamps of the login; Either: start and end time + duration of login OR start time and the information, that the user is still logged in at the end of monitoring  
 
+The script relies on the use of `$>last` and communication over SSH.
+
 ## Usage  
 Taken from:
-`./labmonitor.sh -h`;
-`./labmonitor_worker.sh`
+`$>./labmonitor.sh -h`;
+`$>./labmonitor_worker.sh`
 ```console
 SYNTAX
         ./labmonitor.sh [OPTIONS] -t=TIME -d=FILE
@@ -36,7 +38,8 @@ DESCRIPTION
                 End time of the monitoring
                 Time format:
                 %H:%M
-
+```
+```console
 SYNTAX
         ./labmonitor_worker.sh VERBOSE RETURN_ADDRESS END_TIME
 DESCRIPTION
