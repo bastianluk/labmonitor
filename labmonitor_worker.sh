@@ -13,6 +13,7 @@ SYNTAX
 DESCRIPTION
         Monitors logins for the duration of a run and send results back to
         RETURN_ADDRESS
+EOF
 }
 
 #DEBUG
