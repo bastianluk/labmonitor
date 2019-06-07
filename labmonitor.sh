@@ -13,7 +13,7 @@ set -euo pipefail
 usage(){
   cat <<EOF
 SYNTAX
-        ./labmonitor.sh [OPTIONS] [-t=TIME] -d=FILE
+        ./labmonitor.sh [OPTIONS] -t=TIME -d=FILE
 DESCRIPTION
         The scripts spreads to assigned addresses in FILE and mointors users
         logging on to each of the assigned adresses in FILE and after the end
