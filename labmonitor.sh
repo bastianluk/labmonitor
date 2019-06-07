@@ -145,47 +145,27 @@ spreadToMachines() {
   do
     if [ "$timeParam" = "" ]
     then
-      $(ssh "$line" "sh -s" < labmonitor_worker.sh "$address") && done
+      $(ssh "$line" "sh -s" < labmonitor_worker.sh "$address") & pid=$!
+      PID_LIST+=" $pid"
     else
-      $(ssh "$line" "sh -s" < labmonitor_worker.sh "$address $timeParam")
+      $(ssh "$line" "sh -s" < labmonitor_worker.sh "$address $timeParam") & pid=$!
+      PID_LIST+=" $pid"
     fi
   done < "$file"
-}
 
-#Await results
-awaitResults() {
-  while [ "$active" -eq 1 ]
-  do
-    #Check for new results, update active bool and proceed accordingly
-    if [ "$timeParam" = "" ]
-    then
-      numOfResults=$(ls "$resultFolder" | wc -l)
-      numOfHosts=$(ls "$file" | wc -l)
-      if [ $numOfResults -eq $numOfHosts ]
-      then
-        active=0
-      else
-        sleep 10
-      fi
-    else
-      dateStart=$(date +%Y-%m-%d\ %H:%M)
-      dateEndDay=$(date +%Y\-%m\-%d)
-      dateEnd=$(echo "$dateEndDay" "$timeParam")
-      diff=$(echo "$(date -d "$dateEnd" "+%s")-$(date -d "$dateStart" "+%s")" | bc)
-      if [ "$diff" -ge 0 ]
-      then
-        sleep "$diff"
-      fi
-      timeParam=""
-    fi
-  done
+  trap "kill $PID_LIST" SIGINT
+
+  wait $PID_LIST
 }
 
 #Finish ~ make everyone finish, compile results, sort&format results, cleanup, exit
 finish() {
   #If kill command, then cascade
-  
-  #Format / Compil
+  for file in $resultFolder/*
+  do
+    cat file >> result
+  done
+  #Format / Compile
   #Sort
 
   #Cleanup
@@ -252,10 +232,6 @@ done
 #Spread
 mkdir "$resultFolder"
 spreadToMachines
-
-#Await results
-#Have a table of "got result from" and check for all machines
-awaitResults
 
 #Finish
 finish
