@@ -67,18 +67,15 @@ spreadToMachines() {
 
 #Finish
 finish() {
-  echo "" > "$resultFile"
-  for file in $resultFolder/*
-  do
-    tac "$file" >> "$resultFile"
-  done
-  #Format / Compile
-  if [ "$f" -eq 1 ]
-  then
-    formatOutput
-  fi
+  tmpFile=$(echo "tmp_labFormat$resultFile")
+
+  cd "$resultFolder" && ls -v | xargs tac >> "../$tmpFile" && cd ..
+
+  echo -e 'Address\tLogin\tTime Stamps' > "$resultFile"
+  cat "$tmpFile" |  sed 's/\([^ ]*\) \([^ ]*\) \([^ ]*\)/\1\t\2\t\3/' >> "$resultFile"
 
   #Cleanup
+  rm "$tmpFile"
   rm -r "$resultFolder"
 }
 
