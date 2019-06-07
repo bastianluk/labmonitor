@@ -7,12 +7,13 @@
 ###############################################################################
 
 usage() {
-cat <<EOF
+  cat <<EOF
 SYNTAX
         ./labmonitor_worker.sh RETURN_ADDRESS
 DESCRIPTION
         Monitors logins for the duration of a run and send results back to 
         RETURN_ADDRESS
+  EOF
 }
 
 #DEBUG
