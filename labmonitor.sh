@@ -9,12 +9,12 @@
 
 #DEBUG
 set -euo pipefail
-#set -x
+set -x
 
 usage(){
   cat <<EOF
 SYNTAX
-        ./labmonitor.sh [OPTIONS] -d=FILE
+        ./labmonitor.sh [OPTIONS] [-t=TIME] -d=FILE
 DESCRIPTION
         #TODO
         The scripts spreads to assigned adresses in FILE and mointors users
@@ -26,7 +26,6 @@ DESCRIPTION
         -d
                 Destination list - list of addresses of machines to monitor
                 One address per line
-
         -s
                 Sort... #TODO
 
@@ -42,6 +41,9 @@ DESCRIPTION
                 Quiet/Silent... #TODO
         -v
                 Verbose... #TODO
+        -t
+                End time
+                Time format:%H:%M
         -f
                 Format change for the output table... #TODO
 
@@ -53,14 +55,17 @@ DESCRIPTION
                 n     Login/Name
                 t     Time of the login it belonged to
                 o     Time spent online/logged in
-  EOF
+EOF
 }
 
 
 #ARGs
 #File with addresses to monitor
 file=''
-address=$(echo $(whoami)"@"$(hostname -f)":"$(pwd)"/.tmp_labmonitor)
+resultFolder=$(echo $(pwd)"/.tmp_labmonitor_"$(date +%H_%M))
+address=$(echo $(whoami)"@"$(hostname -f)":""$resultFolder")
+#Time
+timeParam=''
 #Quiet/Silent
 q=0
 #Verbose
@@ -77,7 +82,8 @@ sadr=1
 sname=1
 stime=1
 son=1
-
+#Run
+active=1
 
 #FUNC
 getFormatFlags() {
@@ -137,7 +143,12 @@ sortErase() {
 spreadToMachines() {
   while read line
   do
-    ssh "$line" "sh -s" < labmonitor_worker.sh "$address"
+    if [ "$timeParam" = "" ]
+    then
+      $(ssh "$line" "sh -s" < labmonitor_worker.sh "$address") && done
+    else
+      $(ssh "$line" "sh -s" < labmonitor_worker.sh "$address $timeParam")
+    fi
   done < "$file"
 }
 
@@ -146,8 +157,27 @@ awaitResults() {
   while [ "$active" -eq 1 ]
   do
     #Check for new results, update active bool and proceed accordingly
-    :
-    #Sleep
+    if [ "$timeParam" = "" ]
+    then
+      numOfResults=$(ls "$resultFolder" | wc -l)
+      numOfHosts=$(ls "$file" | wc -l)
+      if [ $numOfResults -eq $numOfHosts ]
+      then
+        active=0
+      else
+        sleep 10
+      fi
+    else
+      dateStart=$(date +%Y-%m-%d\ %H:%M)
+      dateEndDay=$(date +%Y\-%m\-%d)
+      dateEnd=$(echo "$dateEndDay" "$timeParam")
+      diff=$(echo "$(date -d "$dateEnd" "+%s")-$(date -d "$dateStart" "+%s")" | bc)
+      if [ "$diff" -ge 0 ]
+      then
+        sleep "$diff"
+      fi
+      timeParam=""
+    fi
   done
 }
 
@@ -155,17 +185,17 @@ awaitResults() {
 finish() {
   #If kill command, then cascade
   
-  #Format / Compile
+  #Format / Compil
   #Sort
 
   #Cleanup
-  rm -r .tmp_labmonitor/*
-  rmdir .tmp_labmonitor
+  rm -r "$resultFolder"/*
+  rmdir "$resultFolder"
 }
 
 #MAIN
 #Print help if needed
-if [ "$1" = -h ] || [ "$#" -eq 0 ]
+if [ "$#" -eq 0 ] || [ "$1" = "-h" ]
 then
   usage
   exit
@@ -175,9 +205,11 @@ fi
 for options in $@
 do
   case "$options" in
-    -d=)
-      file=$(echo "$options" | cut 4-)
-      echo "$file"
+    -d\=[a-zA-Z0-9\.]*)
+      file=$(echo "$options" | cut -c 4-)
+      ;;
+    -t\=[0-9][0-9]:[0-9][0-9])
+      timeParam=$(echo "$options" | cut -c 4-)
       ;;
     -q)
       #Quiet/Silent
@@ -202,12 +234,14 @@ do
       s=1
       getSortFlags "$options"
       ;;
-    -f)
+    -f[a-z]*)
       #Format change
       f=1
       getFormatFlags "$options"
       ;;
     *)
+      echo "Here"
+      echo "$options"
       #Failsafe
       usage
       exit
@@ -216,7 +250,7 @@ do
 done
 
 #Spread
-mkdir .tmp_labmonitor
+mkdir "$resultFolder"
 spreadToMachines
 
 #Await results
