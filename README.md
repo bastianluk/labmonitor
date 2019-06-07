@@ -1,7 +1,8 @@
 # Specification
 ## Description  
-This script came to be as a project during the authors studies @ MFF UK in Prague and it is supposed to be used for monitoring select PC. It outputs a table in the following format:  
-> [Address]\t[Login]\t[Time Stamps]  
+This script came to be as a project during the authors studies @ MFF UK in Prague and it is supposed to be used for monitoring select PC from the moment the script is run until the specified end time.  
+It outputs a table in the following format:  
+> [Address] \t [Login] \t [Time Stamps]  
 
 Where:
 - [Address]  
@@ -13,8 +14,8 @@ Time stamps of the login; Either: start and end time + duration of login OR star
 
 ## Usage  
 Taken from:
-`./labmonitor.sh -h`
-
+`./labmonitor.sh -h`;
+`./labmonitor_worker.sh`
 ```console
 SYNTAX
         ./labmonitor.sh [OPTIONS] -t=TIME -d=FILE
@@ -32,7 +33,7 @@ DESCRIPTION
         -v
                 Verbose - prints all executed commands (set -x)
         -t
-                End time
+                End time of the monitoring
                 Time format:
                 %H:%M
 
