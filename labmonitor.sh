@@ -89,8 +89,8 @@ finish() {
   fi
 
   #Cleanup
-#  rm "$tmpFile"
-#  rm -r "$resultFolder"
+  rm "$tmpFile"
+  rm -r "$resultFolder"
 }
 
 #UnifiedLog
