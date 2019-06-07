@@ -36,7 +36,11 @@ killHandle(){
 
 timeHandle(){
   diff=$(echo "$(date -d "$dateEnd" "+%s")-$(date -d "$dateStart" "+%s")" | bc)
-  sleep "$diff"
+
+  if [ "$diff" -qe 0 ]
+  then
+    sleep "$diff"
+  else
 
   getResults
 
