@@ -1,0 +1,16 @@
+u-pl0.ms.mff.cuni.cz
+u-pl1.ms.mff.cuni.cz
+u-pl2.ms.mff.cuni.cz
+u-pl3.ms.mff.cuni.cz
+u-pl4.ms.mff.cuni.cz
+u-pl5.ms.mff.cuni.cz
+u-pl6.ms.mff.cuni.cz
+u-pl7.ms.mff.cuni.cz
+u-pl8.ms.mff.cuni.cz
+u-pl9.ms.mff.cuni.cz
+u-pl10.ms.mff.cuni.cz
+u-pl11.ms.mff.cuni.cz
+u-pl12.ms.mff.cuni.cz
+u-pl13.ms.mff.cuni.cz
+u-pl14.ms.mff.cuni.cz
+u-pl15.ms.mff.cuni.cz
