@@ -1,48 +1,44 @@
 # Specification
 ## Description  
-\#TODO  
+This script came to be as a project during the authors studies @ MFF UK in Prague and it is supposed to be used for monitoring select PC. It outputs a table in the following format:  
+> [Address]\t[Login]\t[Time Stamps]  
+
+Where:
+- [Address]  
+Address of a machine that was monitored  
+- [Login]  
+User that was logged in at the machine during the monitoring  
+- [Time Stamps]  
+Time stamps of the login; Either: start and end time + duration of login OR start time and the information, that the user is still logged in at the end of monitoring  
 
 ## Usage  
+Taken from:
+`./labmonitor.sh -h`
+
 ```console
 SYNTAX
-        ./labmonitor.sh [OPTIONS] -d=FILE
+        ./labmonitor.sh [OPTIONS] -t=TIME -d=FILE
 DESCRIPTION
-        #TODO
-        The scripts spreads to assigned adresses in FILE and mointors users
-        logged on to each of the assigned adresses in FILE and after the end
+        The scripts spreads to assigned addresses in FILE and mointors users
+        logging on to each of the assigned adresses in FILE and after the end
         of its run it returns a table of logins with the time they logged in at
         and the duration they were logged in for
         OPTIONS:
+        -h
+                Help - shows this information
         -d
                 Destination list - list of addresses of machines to monitor
                 One address per line
-        -s
-                Sort... #TODO
-                Example:
-                #TODO
-                FLAGS:
-                a     Adress of PC the login belonged to
-                n     Login/Name
-                t     Time of the login it belonged to
-                o     Time spent online/logged in
-        -q
-                Quiet/Silent... #TODO
         -v
-                Verbose... #TODO
-        -f
-                Format change for the output table... #TODO
-                Example:
-                -f[FLAGS]
-                FLAGS:
-                a     Adress of PC the login belonged to
-                n     Login/Name
-                t     Time of the login it belonged to
-                o     Time spent online/logged in
-```
+                Verbose - prints all executed commands (set -x)
+        -t
+                End time
+                Time format:
+                %H:%M
 
-\#TEMP
-> MAIL:  
-> Navrhuji program, co se spustí na všech počítačích v labu a začne každou
-> sekundu monitorovat, kdo je přihlášen na nějakém PC. Na konci svého běhu
-> data vezme a vytvoří tabulku, kde bude pro daný login údaj, kde, kdy a
-> jak dlouho byl uživatel přihlášen
+SYNTAX
+        ./labmonitor_worker.sh VERBOSE RETURN_ADDRESS END_TIME
+DESCRIPTION
+        Monitors logins for the duration of a run and send results back to
+        RETURN_ADDRESS
+```
