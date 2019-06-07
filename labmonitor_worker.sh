@@ -35,9 +35,7 @@ killHandle(){
 }
 
 timeHandle(){
-  echo "Here"
   diff=$(echo "$(date -d "$dateEnd" "+%s")-$(date -d "$dateStart" "+%s")" | bc)
-  echo "$diff"
   sleep "$diff"
 
   getResults
@@ -58,7 +56,6 @@ getResults(){
 #Finish
 finish() {
   #Send results
-  echo "$1"
   scp "$fileName" "$address"
 
   #Cleanup
