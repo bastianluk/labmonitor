@@ -6,7 +6,22 @@
 #Github         : https://github.com/bastianluk
 ###############################################################################
 
-set -euo pipefail
-set -x
+#DEBUG
+#set -euo pipefail
+#set -x
 
-#TODO
+#ARGs
+fileName=$(echo "res_"$(hostname -f))
+
+#FUNC
+
+
+#MAIN
+echo "$1" > "$filename"
+hostname >> "$filename"
+
+#Send results
+scp "$filename" bastianl@u-pl13.ms.mff.cuni.cz:/tmp
+
+#Cleanup
+rm "$filename"

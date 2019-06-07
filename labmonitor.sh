@@ -1,35 +1,49 @@
 #!/bin/sh
+###############################################################################
+#Script Name    : labmonitor.sh
+#Description    : Student project used for monitoring logins on specified
+#                 machines
+#Author         : Lukas Bastian
+#Github         : https://github.com/bastianluk
+###############################################################################
+
+#DEBUG
 set -euo pipefail
-set -x
+#set -x
 
 usage(){
 cat <<EOF
-SYNTAXE
-        ./labmonitor.sh [OPTIONS] FILE
-POPIS
-        The scripts spreads to assigned adresses in FILE and mointors users logged on to each of the assigned 
-        adresses in FILE and after the end of its run it returns a table of logins with the time they logged 
-        in at and the duration they were logged in for
-
+SYNTAX
+        ./labmonitor.sh [OPTIONS] -d=FILE
+DESCRIPTION
         #TODO
+        The scripts spreads to assigned adresses in FILE and mointors users
+        logged on to each of the assigned adresses in FILE and after the end
+        of its run it returns a table of logins with the time they logged in at
+        and the duration they were logged in for
+
         OPTIONS:
+        -d
+                Destination list - list of addresses of machines to monitor
+                One address per line
+
         -s
-                Sort
-                
+                Sort... #TODO
+
                 Example:
-                
-                
+                #TODO
+
                 FLAGS:
                 a     Adress of PC the login belonged to
                 n     Login/Name
                 t     Time of the login it belonged to
                 o     Time spent online/logged in
         -q
-                Quiet/Silent
+                Quiet/Silent... #TODO
         -v
-                Verbose
+                Verbose... #TODO
         -f
-                Format change for the output table
+                Format change for the output table... #TODO
 
                 Example:
                 -f[FLAGS]
@@ -44,8 +58,11 @@ EOF
 
 
 #ARGs
+#File with addresses to monitor
+file=''
 #Quiet/Silent
 q=0
+#Verbose
 v=0
 #Format info
 f=0
@@ -115,6 +132,11 @@ sortErase() {
   son=0
 }
 
+#Spread
+spreadToMachines() {
+
+}
+
 
 #MAIN
 #Print help if needed
@@ -127,12 +149,16 @@ fi
 #Params
 for options in $@
 do
-  case "$option" in
+  case "$options" in
+    -d=)
+      file=$(echo "$options" | cut 4-)
+      echo "$file"
+      ;;
     -q)
       #Quiet/Silent
       if [ "$v" -eq 1 ]
       then
-        echo "Overwriting verbose - now quiet."
+        echo "Overwriting verbose - now using quiet."
         v=0
       fi
       q=1
@@ -141,7 +167,7 @@ do
       #Verbose
       if [ "$q" -eq 1 ]
       then
-        echo "Overwriting quiet/silent - now verbose."
+        echo "Overwriting quiet/silent - now using verbose."
         q=0
       fi
       v=1
@@ -161,12 +187,24 @@ do
       usage
       exit
       ;;
+  esac
 done
 
-#TODO
 #Spread
+mkdir .tmp_labmonitor
+address=$(echo $(whoami)"@"$(hostname -f)":"$(pwd)"/.tmp_labmonitor)
+while read line
+do
+  ssh "$line" "sh -s" < labmonitor_worker.sh "$address"
+done < "$file"
 
 #Await results
+#Have a table of "got result from" and check for all machines
+
 
 #Compile results
 
+
+#Cleanup
+rm -r .tmp_labmonitor/*
+rmdir .tmp_labmonitor
