@@ -60,6 +60,7 @@ EOF
 #ARGs
 #File with addresses to monitor
 file=''
+address=$(echo $(whoami)"@"$(hostname -f)":"$(pwd)"/.tmp_labmonitor)
 #Quiet/Silent
 q=0
 #Verbose
@@ -134,9 +135,33 @@ sortErase() {
 
 #Spread
 spreadToMachines() {
-
+  while read line
+  do
+    ssh "$line" "sh -s" < labmonitor_worker.sh "$address"
+  done < "$file"
 }
 
+#Await results
+awaitResults() {
+  while [ "$active" -eq 1 ]
+  do
+    #Check for new results, update active bool and proceed accordingly
+    :
+    #Sleep
+  done
+}
+
+#Finish ~ make everyone finish, compile results, sort&format results, cleanup, exit
+finish() {
+  #If kill command, then cascade
+  
+  #Format / Compile
+  #Sort
+
+  #Cleanup
+  rm -r .tmp_labmonitor/*
+  rmdir .tmp_labmonitor
+}
 
 #MAIN
 #Print help if needed
@@ -192,19 +217,11 @@ done
 
 #Spread
 mkdir .tmp_labmonitor
-address=$(echo $(whoami)"@"$(hostname -f)":"$(pwd)"/.tmp_labmonitor)
-while read line
-do
-  ssh "$line" "sh -s" < labmonitor_worker.sh "$address"
-done < "$file"
+spreadToMachines
 
 #Await results
 #Have a table of "got result from" and check for all machines
+awaitResults
 
-
-#Compile results
-
-
-#Cleanup
-rm -r .tmp_labmonitor/*
-rmdir .tmp_labmonitor
+#Finish
+finish
