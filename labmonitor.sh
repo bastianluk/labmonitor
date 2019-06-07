@@ -31,6 +31,10 @@ DESCRIPTION
                 End time of the monitoring
                 Time format:
                 %H:%M
+        -u
+                Prints a Unified verion of the log on per user basis
+                FLAGS:
+                c     ~ Compact
 EOF
 }
 
@@ -44,6 +48,9 @@ address=$(echo $(whoami)"@"$(hostname -f)":""$resultFolder")
 timeParam=''
 #Verbose
 v=0
+#Unify
+u=0
+uc=0
 
 #FUNC
 #Spread
@@ -75,10 +82,40 @@ finish() {
   echo -e 'Address\tLogin\tTime Stamps' > "$resultFile"
   cat "$tmpFile" |  sed 's/\([^ ]*\) \([^ ]*\) \([^ ]*\)/\1\t\2\t\3/' >> "$resultFile"
 
+  #Unify
+  if [ "$u" -eq 1 ]
+  then
+    unifyLog
+  fi
+
   #Cleanup
-  rm "$tmpFile"
-  rm -r "$resultFolder"
+#  rm "$tmpFile"
+#  rm -r "$resultFolder"
 }
+
+#UnifiedLog
+unifyLog() {
+  cut -d' ' -f2 "$tmpFile" | sort -u > "$tmpFile"_Names
+  if [ "$uc" -eq 1 ]
+  then
+    echo -e 'Login\tNumber of logins during monitoring' > "$resultFile"
+  else
+    echo -e 'Login:\n\t[Login occurrences]' > "$resultFile"
+  fi
+  while read line
+  do
+    if [ "$uc" -eq 1 ]
+    then
+      numOfLogins=$(grep "$line" "$tmpFile" | wc -l)
+      echo -e "$line"'\t'"$numOfLogins" >> "$resultFile"
+    else
+      echo "$line" >> "$resultFile"
+      grep "$line" "$tmpFile" | cut -d' ' -f1,3- >> "$resultFile"
+      echo "" >> "$resultFile"
+    fi
+  done < "$tmpFile"_Names
+}
+
 
 #MAIN
 #Print help if needed
@@ -103,6 +140,14 @@ do
     -v)
       #Verbose
       set -x
+      ;;
+    -uc)
+      #Unify compact
+      uc=1
+      ;;
+    -u)
+      #Unify
+      u=1
       ;;
     *)
       #Failsafe
