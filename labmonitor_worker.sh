@@ -6,6 +6,15 @@
 #Github         : https://github.com/bastianluk
 ###############################################################################
 
+usage() {
+cat <<EOF
+SYNTAX
+        ./labmonitor_worker.sh RETURN_ADDRESS
+DESCRIPTION
+        Monitors logins for the duration of a run and send results back to 
+        RETURN_ADDRESS
+}
+
 #DEBUG
 #set -euo pipefail
 #set -x
@@ -14,14 +23,23 @@
 fileName=$(echo "res_"$(hostname -f))
 
 #FUNC
+#Login check
+checkNew() {
+  
+}
 
+#Finish
+finish() {
+  #Send results
+  scp "$filename" "$1"
+
+  #Cleanup
+  rm "$filename"
+}
 
 #MAIN
 echo "$1" > "$filename"
 hostname >> "$filename"
 
-#Send results
-scp "$filename" bastianl@u-pl13.ms.mff.cuni.cz:/tmp
-
-#Cleanup
-rm "$filename"
+#Before kill or end time - call finish
+finish
