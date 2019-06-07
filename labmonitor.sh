@@ -12,7 +12,7 @@ set -euo pipefail
 #set -x
 
 usage(){
-cat <<EOF
+  cat <<EOF
 SYNTAX
         ./labmonitor.sh [OPTIONS] -d=FILE
 DESCRIPTION
@@ -53,7 +53,7 @@ DESCRIPTION
                 n     Login/Name
                 t     Time of the login it belonged to
                 o     Time spent online/logged in
-EOF
+  EOF
 }
 
 
