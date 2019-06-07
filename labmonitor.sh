@@ -19,15 +19,16 @@ DESCRIPTION
         logging on to each of the assigned adresses in FILE and after the end
         of its run it returns a table of logins with the time they logged in at
         and the duration they were logged in for
-
         OPTIONS:
+        -h
+                Help - shows this information
         -d
                 Destination list - list of addresses of machines to monitor
                 One address per line
         -v
                 Verbose - prints all executed commands (set -x)
         -t
-                End time
+                End time of the monitoring
                 Time format:
                 %H:%M
 EOF
