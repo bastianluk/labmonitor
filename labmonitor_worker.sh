@@ -24,8 +24,8 @@ EOF
 dateStart=$(date +%Y-%m-%d\ %H:%M)
 dateEndDay=''
 dateEnd=''
-file1="tmp_labwork_"$(hostname -f)"1"
-file2="tmp_labwork_"$(hostname -f)"2"
+file1=$(echo "tmp_labwork_"$(hostname -f)"1")
+file2=$(echo "tmp_labwork_"$(hostname -f)"2")
 fileName=$(echo "res_"$(hostname -f))
 address="$1"
 
@@ -65,7 +65,8 @@ finish() {
   scp "$fileName" "$address"
 
   #Cleanup
-  rm tmp_labwork_$(hostname -f)*
+  rm "$file1"
+  rm "$file2"
   rm "$fileName"
 }
 
